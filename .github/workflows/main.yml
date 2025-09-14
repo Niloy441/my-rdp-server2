@@ -1,0 +1,52 @@
+name: Programmingwithkumaresan
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Start Building...
+    runs-on: windows-latest
+    timeout-minutes: 9999
+
+    steps:
+      # Essentials ডাউনলোড ও ইনস্টল
+      - name: Downloading & Installing Essentials
+        run: |
+          Invoke-WebRequest -Uri "https://gitlab.com/chamod12/lm_win-10_github_rdp/-/raw/main/Downloads.bat" -OutFile "Downloads.bat"
+          if (Test-Path .\Downloads.bat) {
+            cmd /c Downloads.bat
+          } else {
+            Write-Error "Downloads.bat file download failed!"
+            exit 1
+          }
+
+      # Public IP Address বের করুন (লগে দেখা যাবে)
+      - name: Get Public IP Address
+        run: |
+          $ip = Invoke-RestMethod -Uri "https://ipinfo.io/ip"
+          Write-Host "Public IP Address: $ip"
+
+      # show.bat ফাইল আছে কিনা চেক করুন
+      - name: Check show.bat file exists
+        run: |
+          if not exist show.bat (
+            echo show.bat not found!
+            exit /b 1
+          )
+
+      # LiteManager-এ কানেক্ট করুন
+      - name: Connect to LiteManager
+        run: cmd /c show.bat
+
+      # loop.bat ফাইল আছে কিনা চেক করুন
+      - name: Check loop.bat file exists
+        run: |
+          if not exist loop.bat (
+            echo loop.bat not found!
+            exit /b 1
+          )
+
+      # টাইম কাউন্টার চালান
+      - name: Time Counter
+        run: cmd /c loop.bat
